@@ -1,0 +1,10 @@
+{application,rcs_common,
+             [{description,"Common code shared between Riak CS and Stanchion"},
+              {vsn,"0.1.0"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {env,[]},
+              {modules,[rcs_common_manifest,rcs_common_manifest_resolution,
+                        rcs_common_manifest_utils]},
+              {licenses,["Apache 2.0"]},
+              {links,[]}]}.
