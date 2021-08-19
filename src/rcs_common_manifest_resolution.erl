@@ -88,14 +88,18 @@ resolve_manifests(_, _,
                props = Props};
 
 resolve_manifests(_, _,
-                  ?MANIFEST{state = active,acl=A1Acl} = A,
-                  ?MANIFEST{state = active,acl=A2Acl} = B) ->
+                  ?MANIFEST{prev_object_version = A1PrevV,
+                            next_object_version = A1NextV,
+                            state = active, acl = A1Acl} = A,
+                  ?MANIFEST{state = active, acl = A2Acl} = B) ->
     Props = resolve_props(A, B),
     case A1Acl?ACL.creation_time >= A2Acl?ACL.creation_time of
         true ->
             A?MANIFEST{props = Props};
         false ->
-            B?MANIFEST{props = Props}
+            B?MANIFEST{props = Props,
+                       prev_object_version = A1PrevV,
+                       next_object_version = A1NextV}
     end;
 
 resolve_manifests(_, _,
