@@ -118,7 +118,7 @@ upgrade_manifest(#lfs_manifest_v3{block_size = BlockSize,
 
     upgrade_manifest(#lfs_manifest_v4{block_size = BlockSize,
                                       bkey = Bkey,
-                                      object_version = ?LFS_DEFAULT_OBJECT_VERSION,
+                                      vsn = ?LFS_DEFAULT_OBJECT_VERSION,
                                       metadata = Metadata,
                                       created = Created,
                                       uuid = UUID,

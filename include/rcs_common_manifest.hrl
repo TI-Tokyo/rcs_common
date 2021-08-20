@@ -124,9 +124,7 @@
         %% added in v4:
         %% there's always a primary version, which is head of a
         %% double-linked list of all versions
-        object_version = ?LFS_DEFAULT_OBJECT_VERSION :: binary(),
-        next_object_version = eol :: eol | binary(),
-        prev_object_version = eol :: eol | binary(),
+        vsn = ?LFS_DEFAULT_OBJECT_VERSION :: binary(),
 
         %% user metadata that would normally
         %% be placed on the riak_object. We avoid
@@ -255,7 +253,7 @@
     bucket :: binary(),
     key :: binary(),
     %% new in v2
-    object_version = ?LFS_DEFAULT_OBJECT_VERSION :: binary(),
+    vsn = ?LFS_DEFAULT_OBJECT_VERSION :: binary(),
 
     %% used to judge races between concurrent uploads
     %% of the same part_number
