@@ -1,3 +1,4 @@
 .eunit/*
 _build/
 *.beam
+rebar.lock
