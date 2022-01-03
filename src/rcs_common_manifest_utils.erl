@@ -30,6 +30,7 @@
          active_manifests/1,
          active_and_writing_manifests/1,
          deleted_while_writing/1,
+         filter_manifests_by_state/2,
          mark_deleted/2,
          mark_pending_delete/2,
          mark_scheduled_delete/2,
@@ -381,3 +382,70 @@ filter_manifests_by_state(Dict, AcceptedStates) ->
 
 orddict_values(OrdDict) ->
     [V || {_K, V} <- orddict:to_list(OrdDict)].
+
+
+%% ===================================================================
+%% EUnit tests
+%% ===================================================================
+-ifdef(TEST).
+
+new_mani_helper() ->
+    riak_cs_lfs_utils:new_manifest(
+      <<"bucket">>, <<"key">>, <<"1.0">>, <<"uuid">>,
+      100, %% content-length
+      <<"ctype">>,
+      undefined, %% md5
+      orddict:new(),
+      10,
+      undefined,
+      [],
+      undefined,
+      undefined).
+
+manifest_test_() ->
+    {setup,
+        fun setup/0,
+        fun cleanup/1,
+        [fun wrong_state_for_pruning/0,
+         fun wrong_state_for_pruning_2/0,
+         fun does_need_pruning/0,
+         fun not_old_enough_for_pruning/0]
+    }.
+
+setup() ->
+    ok.
+
+cleanup(_Ctx) ->
+    ok.
+
+wrong_state_for_pruning() ->
+    Mani = new_mani_helper(),
+    Mani2 = Mani?MANIFEST{state=active},
+    ?assert(not needs_pruning(Mani2, erlang:timestamp())).
+
+wrong_state_for_pruning_2() ->
+    Mani = new_mani_helper(),
+    Mani2 = Mani?MANIFEST{state=pending_delete},
+    ?assert(not needs_pruning(Mani2, erlang:timestamp())).
+
+does_need_pruning() ->
+    application:set_env(riak_cs, leeway_seconds, 1),
+    %% 1000000 second diff
+    ScheduledDeleteTime = {1333,985708,445136},
+    Now = {1334,985708,445136},
+    Mani = new_mani_helper(),
+    Mani2 = Mani?MANIFEST{state=scheduled_delete,
+                                scheduled_delete_time=ScheduledDeleteTime},
+    ?assert(needs_pruning(Mani2, Now)).
+
+not_old_enough_for_pruning() ->
+    application:set_env(riak_cs, leeway_seconds, 2),
+    %$ 1 second diff
+    ScheduledDeleteTime = {1333,985708,445136},
+    Now = {1333,985709,445136},
+    Mani = new_mani_helper(),
+    Mani2 = Mani?MANIFEST{state=scheduled_delete,
+                                scheduled_delete_time=ScheduledDeleteTime},
+    ?assert(not needs_pruning(Mani2, Now)).
+
+-endif.
