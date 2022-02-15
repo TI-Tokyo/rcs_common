@@ -1,6 +1,6 @@
-* RCS Common
+# RCS Common
 
 Code shared between riak_cs and stanchion, currently including
 `lfs_manifest` and dependent records, with a subset of functions from
-riak_cs_manifest_util.erl and riak_cs_manifest.erl that are pure and
-do not call any riak_cs specific functions.
+riak\_cs\_manifest\_util.erl and riak\_cs\_manifest.erl that are pure and
+do not call any riak\_cs specific functions.

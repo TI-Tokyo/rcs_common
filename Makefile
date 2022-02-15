@@ -1,26 +1,16 @@
-REPO		?= rcs_common
-HEAD_REVISION   ?= $(shell git describe --tags --exact-match HEAD 2>/dev/null)
-BASE_DIR         = $(shell pwd)
-ERLANG_BIN       = $(shell dirname $(shell which erl 2>/dev/null) 2>/dev/null)
-OTP_VER          = $(shell echo $(ERLANG_BIN) | rev | cut -d "/" -f 2 | rev)
-REBAR           ?= $(BASE_DIR)/rebar3
+REBAR ?= ./rebar3
 
-.PHONY: deps test
+.PHONY: compile rel clean test
 
-all: deps compile
+all: compile
 
-compile: deps
-	@($(REBAR) compile)
-
-deps:
-	@$(REBAR) get-deps
-
+compile:
+	@$(REBAR) compile
+rel:
+	@$(REBAR) as rel release
 clean:
 	@$(REBAR) clean
-
-distclean: clean
-	@$(REBAR) delete-deps
-
-DIALYZER_APPS = kernel stdlib sasl erts ssl tools os_mon runtime_tools crypto inets \
-	webtool eunit syntax_tools compiler
-PLT ?= $(HOME)/.rcs_common_dialyzer_plt
+relclean:
+	rm -rf _build/rel/rel/rcs_common
+test:
+	@$(REBAR) eunit

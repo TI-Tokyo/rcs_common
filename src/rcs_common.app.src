@@ -1,6 +1,6 @@
 {application, rcs_common,
  [{description, "Common code shared between Riak CS and Stanchion"},
-  {vsn, "0.1.0"},
+  {vsn, git},
   {registered, []},
   {applications,
    [kernel,
